@@ -83,7 +83,7 @@ adb reboot bootloader
 
 
 #### Boot into the UEFI
-> Replace `path\to\nabu-uefi.img` with the actual path of the UEFI image
+> Replace `path\to\mu-nabu` with the actual path of the UEFI image
 ```cmd
 fastboot boot path\to\mu-nabu.img
 ```
@@ -93,6 +93,7 @@ fastboot boot path\to\mu-nabu.img
 </details>
 
 ----
+
 
 
 
