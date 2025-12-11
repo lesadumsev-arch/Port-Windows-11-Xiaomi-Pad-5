@@ -5,11 +5,13 @@
 ## Installation
 
 ### Prerequisites
-- ```Unlocked bootloader``` - (If your bootloader is locked and you don't know how to unlock it use [this](unlock-bootloader-en.md) guide)
+- ```Installed Windows```
 
 -  ```Brain```
 
 - ```Windows 10(or higher) PC/Laptop```
+
+- [```DriveLetterAssigner Tool```](https://github.com/Misha803/My-Scripts/releases/tag/DriveLetterAssigner)
 
 - [```Android platform tools```](https://developer.android.com/studio/releases/platform-tools)
 
@@ -17,12 +19,7 @@
 
 ### Notes:
 > [!NOTE]
-> You can use any Android for dualboot - MIUI/Hyper OS or any custom ROM
-
-> [!Warning]
-> All your data will be erased! Back up now if needed.
-> 
-> DO NOT REBOOT YOUR TABLET if you think you made a mistake, ask for help in the [Telegram chat](https://t.me/nabuwoa)
+> You was been have change UEFI, and test mode
 
 ### Opening CMD as an administrator
 > [!NOTE]
@@ -53,128 +50,21 @@ fastboot boot path\to\recovery.img
 adb shell "dd if=/dev/block/platform/soc/1d84000.ufshc/by-name/boot$(getprop ro.boot.slot_suffix) of=/tmp/normal_boot.img" && adb pull /tmp/normal_boot.img
 ```
 
-### Partitioning your device
-> There are two methods to partition your device. Please select the method you would like to use below.
+### Assign letters to WINNABU and ESPNABU
+> Run the **DriveLetterAssigner** and click **`YES`** to automatically assign the letters **X** and **Y** to **WINNABU** and **ESPNABU**
  
-> [!NOTE]
->
-> ▶️ Click to expand the menu.
-
-### Method 1: Manual partitioning (use it only if you know what you're doing)
-
-<details>
-  <summary><strong>Click here for method 1</strong></summary> 
-
-#### Unmount data
-> Ignore any possible errors and continue
+#### Boot into the UEFI
+> Replace `path\to\nabu-uefi.img` with the actual path of the UEFI image
 ```cmd
-adb shell umount /dev/block/by-name/userdata
-``` 
-
-#### Resizing the partition table
-```cmd
-adb shell sgdisk --resize-table 64 /dev/block/sda
+fastboot boot path\to\mu-nabu.img
 ```
 
-### Preparing for partitioning
-```cmd
-adb shell parted /dev/block/sda
-``` 
-
-#### Printing the current partition table
-> Parted will print the list of partitions, **userdata** should be the last partition in the list
-```cmd
-print
-``` 
-
-#### Removing userdata
-> Replace **$** with the number of the **userdata** partition, which should be **31**
-```cmd
-rm $
-``` 
-
-#### Recreating userdata
-> Replace **10.9GB** with the former start value of **userdata** which we just deleted
->
-> Replace **70GB** with the end value you want **userdata** to have. In this example your available usable space in Android will be 70GB-10.9GB = **59GB**
-```cmd
-mkpart userdata ext4 10.9GB 70GB
-``` 
-
-#### Creating ESP partition
-> Replace **70GB** with the end value of **userdata**
->
-> Replace **70.3GB** with the value you used before, adding **0.3GB** to it
-```cmd
-mkpart esp fat32 70GB 70.3GB
-``` 
-
-#### Creating Windows partition
-> Replace **70.3GB** with the end value of **esp**
-```cmd
-mkpart win ntfs 70.3GB -0MB
-``` 
-
-#### Making ESP bootable
-> Use `print` to see all partitions. Replace "$" with your ESP partition number, which should be **32**
-```cmd
-set $ esp on
-``` 
-
-#### Exit parted
-```cmd
-quit
-``` 
-
-### Formatting Windows and ESP partitions
-> Ensure that **win** actually has partition number **33** by scrolling up to the output of the `print` command
-```cmd
-adb shell mkfs.ntfs -f /dev/block/sda33 -L WINNABU
-``` 
-
-> Ensure that **esp** actually has partition number **32** by scrolling up to the output of the `print` command
-```cmd
-adb shell mkfs.fat -F32 -s1 /dev/block/sda32 -n ESPNABU
-```
-
-### Fixing the GPT
-> Or Windows may brick your device
-```cmd
-adb shell fixgpt
-```
-
-#### Reboot your device
-> To check if Android still starts
->
-> If it doesn't, reboot into stock recovery and perform a factory reset there
-```cmd
-adb reboot
-```
-
-### [Next step: Rooting your device](/guide/English/2-rootguide-en.md)
-
-----
-
-</details>
-
-### Method 2: Automatic partitioning (recommended)
-
-<details>
-  <summary><strong>Click here for method 2</strong></summary> 
-
-### Run the partitioning script
-> Replace **$** with the amount of storage you want Windows to have (do not add GB, just write the number)
-> 
-> If it asks you to run it once again, do so
-```cmd
-adb shell partition $
-```
-
-### [Next step: Rooting your device](/guide/English/2-rootguide-en.md)
+#### [Last step: Setting up dualboot](/guide/English/dualboot-selection-en.md)
 
 </details>
 
 ----
+
 
 
 
