@@ -11,6 +11,8 @@
 
 - ```Windows 10(or higher) PC/Laptop```
 
+- [```New UEFI```](https://github.com/lesadumsev-arch/Port-Windows-11-Xiaomi-Pad-5/releases/download/untagged-98682cff8df2f1374b8a/Mu-nabu.2.img)
+
 - [```DriveLetterAssigner Tool```](https://github.com/Misha803/My-Scripts/releases/tag/DriveLetterAssigner)
 
 - [```Android platform tools```](https://developer.android.com/studio/releases/platform-tools)
@@ -77,7 +79,9 @@ mountvol y: /d
 ### Reboot to fastboot
 ```cmd
 adb reboot bootloader
- 
+ ```
+
+
 #### Boot into the UEFI
 > Replace `path\to\nabu-uefi.img` with the actual path of the UEFI image
 ```cmd
@@ -89,6 +93,7 @@ fastboot boot path\to\mu-nabu.img
 </details>
 
 ----
+
 
 
 
