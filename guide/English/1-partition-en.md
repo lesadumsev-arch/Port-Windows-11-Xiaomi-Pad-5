@@ -52,6 +52,31 @@ adb shell "dd if=/dev/block/platform/soc/1d84000.ufshc/by-name/boot$(getprop ro.
 
 ### Assign letters to WINNABU and ESPNABU
 > Run the **DriveLetterAssigner** and click **`YES`** to automatically assign the letters **X** and **Y** to **WINNABU** and **ESPNABU**
+
+#### Enabling test signing
+```cmd
+bcdedit /store Y:\EFI\Microsoft\BOOT\BCD /set "{default}" testsigning on
+```
+
+#### Disabling recovery
+```cmd
+bcdedit /store Y:\EFI\Microsoft\BOOT\BCD /set "{default}" recoveryenabled no
+```
+
+#### Disabling integrity checks
+```cmd
+bcdedit /store Y:\EFI\Microsoft\BOOT\BCD /set "{default}" nointegritychecks on
+```
+
+#### Remove the drive letter for ESP
+> If this does not work, ignore it and skip to the next command. This phantom drive will disappear the next time you reboot your PC.
+```cmd
+mountvol y: /d
+```
+
+### Reboot to fastboot
+```cmd
+adb reboot bootloader
  
 #### Boot into the UEFI
 > Replace `path\to\nabu-uefi.img` with the actual path of the UEFI image
@@ -64,6 +89,7 @@ fastboot boot path\to\mu-nabu.img
 </details>
 
 ----
+
 
 
 
