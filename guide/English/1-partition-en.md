@@ -5,15 +5,11 @@
 ## Installation
 
 ### Prerequisites
-- ```Installed Windows```
+- ```Unlocked bootloader``` - (If your bootloader is locked and you don't know how to unlock it use [this](unlock-bootloader-en.md) guide)
 
 -  ```Brain```
 
 - ```Windows 10(or higher) PC/Laptop```
-
-- [```New UEFI```](https://github.com/lesadumsev-arch/Port-Windows-11-Xiaomi-Pad-5/releases/download/untagged-98682cff8df2f1374b8a/Mu-nabu.2.img)
-
-- [```DriveLetterAssigner Tool```](https://github.com/Misha803/My-Scripts/releases/tag/DriveLetterAssigner)
 
 - [```Android platform tools```](https://developer.android.com/studio/releases/platform-tools)
 
@@ -21,7 +17,12 @@
 
 ### Notes:
 > [!NOTE]
-> You was been have change UEFI, and test mode
+> You can use any Android for dualboot - MIUI/Hyper OS or any custom ROM
+
+> [!Warning]
+> All your data will be erased! Back up now if needed.
+> 
+> DO NOT REBOOT YOUR TABLET if you think you made a mistake, ask for help in the [Telegram chat](https://t.me/nabuwoa)
 
 ### Opening CMD as an administrator
 > [!NOTE]
@@ -52,50 +53,128 @@ fastboot boot path\to\recovery.img
 adb shell "dd if=/dev/block/platform/soc/1d84000.ufshc/by-name/boot$(getprop ro.boot.slot_suffix) of=/tmp/normal_boot.img" && adb pull /tmp/normal_boot.img
 ```
 
-### Assign letters to WINNABU and ESPNABU
-> Run the **DriveLetterAssigner** and click **`YES`** to automatically assign the letters **X** and **Y** to **WINNABU** and **ESPNABU**
+### Partitioning your device
+> There are two methods to partition your device. Please select the method you would like to use below.
+ 
+> [!NOTE]
+>
+> ▶️ Click to expand the menu.
 
-#### Enabling test signing
+### Method 1: Manual partitioning (use it only if you know what you're doing)
+
+<details>
+  <summary><strong>Click here for method 1</strong></summary> 
+
+#### Unmount data
+> Ignore any possible errors and continue
 ```cmd
-bcdedit /store Y:\EFI\Microsoft\BOOT\BCD /set "{default}" testsigning on
+adb shell umount /dev/block/by-name/userdata
+``` 
+
+#### Resizing the partition table
+```cmd
+adb shell sgdisk --resize-table 64 /dev/block/sda
 ```
 
-#### Disabling recovery
+### Preparing for partitioning
 ```cmd
-bcdedit /store Y:\EFI\Microsoft\BOOT\BCD /set "{default}" recoveryenabled no
+adb shell parted /dev/block/sda
+``` 
+
+#### Printing the current partition table
+> Parted will print the list of partitions, **userdata** should be the last partition in the list
+```cmd
+print
+``` 
+
+#### Removing userdata
+> Replace **$** with the number of the **userdata** partition, which should be **31**
+```cmd
+rm $
+``` 
+
+#### Recreating userdata
+> Replace **10.9GB** with the former start value of **userdata** which we just deleted
+>
+> Replace **70GB** with the end value you want **userdata** to have. In this example your available usable space in Android will be 70GB-10.9GB = **59GB**
+```cmd
+mkpart userdata ext4 10.9GB 70GB
+``` 
+
+#### Creating ESP partition
+> Replace **70GB** with the end value of **userdata**
+>
+> Replace **70.3GB** with the value you used before, adding **0.3GB** to it
+```cmd
+mkpart esp fat32 70GB 70.3GB
+``` 
+
+#### Creating Windows partition
+> Replace **70.3GB** with the end value of **esp**
+```cmd
+mkpart win ntfs 70.3GB -0MB
+``` 
+
+#### Making ESP bootable
+> Use `print` to see all partitions. Replace "$" with your ESP partition number, which should be **32**
+```cmd
+set $ esp on
+``` 
+
+#### Exit parted
+```cmd
+quit
+``` 
+
+### Formatting Windows and ESP partitions
+> Ensure that **win** actually has partition number **33** by scrolling up to the output of the `print` command
+```cmd
+adb shell mkfs.ntfs -f /dev/block/sda33 -L WINNABU
+``` 
+
+> Ensure that **esp** actually has partition number **32** by scrolling up to the output of the `print` command
+```cmd
+adb shell mkfs.fat -F32 -s1 /dev/block/sda32 -n ESPNABU
 ```
 
-#### Disabling integrity checks
+### Fixing the GPT
+> Or Windows may brick your device
 ```cmd
-bcdedit /store Y:\EFI\Microsoft\BOOT\BCD /set "{default}" nointegritychecks on
+adb shell fixgpt
 ```
 
-#### Remove the drive letter for ESP
-> If this does not work, ignore it and skip to the next command. This phantom drive will disappear the next time you reboot your PC.
+#### Reboot your device
+> To check if Android still starts
+>
+> If it doesn't, reboot into stock recovery and perform a factory reset there
 ```cmd
-mountvol y: /d
+adb reboot
 ```
 
-### Reboot to fastboot
-```cmd
-adb reboot bootloader
- ```
+### [Next step: Rooting your device](/guide/English/2-rootguide-en.md)
 
+----
 
-#### Boot into the UEFI
-> Replace `path\to\nabu-uefi.img` with the actual path of the UEFI image
+</details>
+
+### Method 2: Automatic partitioning (recommended)
+
+<details>
+  <summary><strong>Click here for method 2</strong></summary> 
+
+### Run the partitioning script
+> Replace **$** with the amount of storage you want Windows to have (do not add GB, just write the number)
+> 
+> If it asks you to run it once again, do so
 ```cmd
-fastboot boot path\to\mu-nabu.img
+adb shell partition $
 ```
 
-#### [Last step: Setting up dualboot](/guide/English/dualboot-selection-en.md)
+### [Next step: Rooting your device](/guide/English/2-rootguide-en.md)
 
 </details>
 
 ----
-
-
-
 
 
 
