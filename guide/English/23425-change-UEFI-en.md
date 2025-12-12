@@ -11,17 +11,13 @@
 
 - ```Windows 10(or higher) PC/Laptop```
 
-- [```New UEFI```](https://github.com/lesadumsev-arch/Port-Windows-11-Xiaomi-Pad-5/releases/download/untagged-98682cff8df2f1374b8a/Mu-nabu.2.img)
+- [```New UEFI```](https://github.com/tvorogo/Port-Windows-11-Xiaomi-Pad-5/releases/tag/Uefi)
 
 - [```DriveLetterAssigner Tool```](https://github.com/Misha803/My-Scripts/releases/tag/DriveLetterAssigner)
 
 - [```Android platform tools```](https://developer.android.com/studio/releases/platform-tools)
 
 - [```Modified recovery image```](https://github.com/ArKT-7/twrp_device_xiaomi_nabu/releases/tag/mod-win)
-
-### Notes:
-> [!NOTE]
-> You was been have change UEFI, and test mode
 
 ### Opening CMD as an administrator
 > [!NOTE]
@@ -93,6 +89,7 @@ fastboot boot path\to\mu-nabu.img
 </details>
 
 ----
+
 
 
 
